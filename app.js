@@ -1,10 +1,11 @@
 const express = require("express");
-const { getTopics } = require("./controllers/controllers");
+const { getTopics, getEndpoints } = require("./controllers/controllers");
 const app = express();
-require('dotenv').config();
 
 
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 
