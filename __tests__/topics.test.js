@@ -37,16 +37,13 @@ describe("GET /api/topics", () => {
 	});
 });
 
-
-
-	// .then((response) => {
-	// 	expect(response.body.treasures.length).toBe(2);
-	// 	response.body.treasures.forEach((treasure) => {
-	// 		expect(treasure.colour).toBe("gold");
-	// 	});
-			// .then((response) => {
-			// //	expect(response).toBeInstanceOf(Array);
-			// 	expect(response.body.length).toBeGreaterThan(1);
-
-    //an array of topic objects, each of which should have the following properties:slug / description
-	//second test to test for slug and description find the right matcher
+describe("GET /api", () => {
+	test("STATUS 200: Responds with an object describing all the available endpoints on your API.", () => {
+		return request(app)
+			.get("/api")
+			.expect(200)
+			.then((endpoints) => {
+				expect(endpoints.body).toBeInstanceOf(Object);
+			})
+	});
+});
