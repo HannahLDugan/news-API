@@ -11,7 +11,6 @@ const selectEndpoints = async () => {
 const endpoints = `./endpoints.json`;
 const endpointsString = await fs.readFile(endpoints, "utf-8");
 return JSON.parse(endpointsString)
-        //need to send a JSON stringified file
     };
 
     const selectArticlesId = (article_id) => {
@@ -35,10 +34,24 @@ return JSON.parse(endpointsString)
         GROUP BY articles.article_id
         ORDER BY articles.created_at DESC;`)
         .then((result) => {
-            //console.log(result)
           return result
         })
-    }
+    };
+
+    const selectAllComments = (article_id) => {
+        return db.query 
+        (`SELECT *
+        FROM comments
+        WHERE article_id = $1
+        ORDER BY created_at DESC;`, [article_id])
+       .then(({rows}) => {
+        if (rows.length === 0) {
+            console.log(rows.length)
+            return Promise.reject({ status: 404, msg: "not found"});
+        }
+        return rows
+    });
+    };
 
 
-module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles }
+module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments }

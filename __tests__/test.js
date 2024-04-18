@@ -119,19 +119,40 @@ describe("GET /api/articles/:article_id", () => {
 		});
 });
 	
-//task 5
-//need to use join and count to add comment count 
-//task 5 should come back with an array of objects
-//key of articles & value be an array
-//can test for article length equals
-//does each object have a comment count object
-//aggregate function look at notes
-//can query comments table
-//left join to be checked by test 
-//test for sort by query as needs to be in desc order
-//test for sad path
-//need to remove body property 
-//expect body to be undefined or null
-
-
-
+describe.only("GET /api/articles/:article_id/comments", () => {
+	test("respond with STATUS 200.", () => {
+		return request(app)
+			.get("/api/articles/1/comments")
+			.expect(200)
+		});
+		test("STATUS 200: should return an array of comments for the given article ID with the correct properties.", () => {
+			return request(app)
+			.get("/api/articles/1/comments")
+			.expect(200)
+			.then(({body}) => {
+				const { comments } = body;
+			console.log(comments)
+			expect(comments).toHaveLength(11)
+			comments.forEach((comment) => {
+				console.log(comment)
+				expect(comment).toMatchObject({
+					comment_id: expect.any(Number),
+					votes: expect.any(Number),
+					created_at: expect.any(String),
+					author: expect.any(String),
+					body: expect.any(String),
+					article_id: expect.any(Number)
+				});
+			});
+			});
+		  });
+		test("STATUS 200: comments should be sorted by date in descending order.", () => {
+			return request(app)
+			.get("/api/articles/1/comments")
+			.expect(200)
+			.then(({body}) => {
+			const { comments } = body;
+			expect(comments).toBeSortedBy('created_at', {descending : true})
+			});
+			});
+		});
