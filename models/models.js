@@ -45,13 +45,24 @@ return JSON.parse(endpointsString)
         WHERE article_id = $1
         ORDER BY created_at DESC;`, [article_id])
        .then(({rows}) => {
-        if (rows.length === 0) {
-            console.log(rows.length)
-            return Promise.reject({ status: 404, msg: "not found"});
-        }
         return rows
     });
     };
 
+    const addComment = (article_id, newUsername, commentBody) => {
+    if (!article_id || !commentBody) {
+        return Promise.reject({status: 400, msg: "invalid request"})
+    }
+    return db.query(
+        `INSERT INTO comments
+        (body, author, article_id)
+        VALUES ($1, $2, $3)
+        RETURNING *;`, [commentBody, newUsername, article_id])
+        .then(({rows}) => {
+            return rows[0]
+        })
+    };
 
-module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments }
+
+
+module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment }
