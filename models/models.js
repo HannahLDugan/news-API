@@ -63,6 +63,20 @@ return JSON.parse(endpointsString)
         })
     };
 
+    const updateVotes = async (article_id, inc_votes) => {
+  return await db.query(
+            //update 
+        `UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;`,
+        [inc_votes, article_id])
+        .then(({rows}) => {
+            return rows[0]
+        });
+    };
 
 
-module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment }
+
+
+module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment, updateVotes }

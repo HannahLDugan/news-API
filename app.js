@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getEndpoints, getArticlesId, getAllArticles, getComments, postComment } = require("./controllers/controllers");
+const { getTopics, getEndpoints, getArticlesId, getAllArticles, getComments, postComment, patchVotes } = require("./controllers/controllers");
 const app = express();
 
 app.use(express.json());
@@ -16,7 +16,7 @@ app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
-
+app.patch("/api/articles/:article_id", patchVotes)
 
 
 //psql error handlers

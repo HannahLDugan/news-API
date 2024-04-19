@@ -265,57 +265,48 @@ describe("GET /api/articles/:article_id/comments", () => {
 
 //task 8 TDD
 
-// describe("PATCH: ", () => {
-// 	test("STATUS 200: should return a 200 status code", () => {
-// 		return request(app)
-// 			.patch("/api/articles/1/")
-// 			.send({
-// 				inc_votes: 1,
-// 			//	{ inc_votes: newVote }
-// 			})
-// 		.then((response) => {
-// 			expect(response.body.article[0]).toEqual({
-// 				//check how many votes and that it has increased by 1
-// 			})
-// 		})
-// 		});
-// 	test("STATUS 404: should return statis 404 when passed an article id that doesn't exist", () =>{
-// 		return request(app)
-// 		.patch("/api/articles/40")
-// 		.send({
-		
-// 		})
-// 	});
-// 	test("STATUS 400: should return 400 status code when there is an incomplete body. ", () => {
-// 		return request(app)
-// 		.patch("/api/articles/incomplete")
-// 		.expect(400)
-// 		.then((response) => {
-// 		expect(response.body.msg).toBe("invalid request");
-// 		})
-// 	});
-// 	test("STATUS 400: bad request when passed an invalid article id", () => {
-// 		return request(app)
-// 		.patch("/api/articles/randomid")
-// 		.send(somethinghere)
-// 		.expect(400)
-// 		.then((response) => {
-// 			expect(response.body.msg).toBe("invalid article id");
-// 		})
-// 	});
-// });
-
-//4 tests for task 8
-//200 update with the updated article 
-//use previous tests and make sure they have updated and changed from what 
-//they were 
-//400 bad request invalid article ID 
-//might be error handling that I already have 
-//404 article ID doesn't exist e.g. /9999
-//400 bad request incomplete body inc votes should be a number
-// do it as a string as that should throw 400 error 
-// checking that votes havent been increased 
-//4 tests
-
-// Remember to add a description of this endpoint 
-
+describe.only("PATCH: ", () => {
+	test("STATUS 200: should return a 200 status code", () => {
+		// jest.setTimeout(10000)
+		return request(app)
+			.patch("/api/articles/1/")
+			.send({ inc_votes: 1 })
+			.expect(200)
+		   .then(({ body }) => {
+			expect(body.article).toMatchObject({
+				article_id: 1,
+				author: expect.any(String),
+				title: expect.any(String),
+				body: expect.any(String),
+				created_at: expect.any(String),
+				votes: 101,
+				article_img_url: expect.any(String),
+			});
+			})
+});
+	test("STATUS 404: should return status 404 when passed an article id that doesn't exist", () =>{
+		return request(app)
+		.patch("/api/articles/40")
+		.expect(404)
+		.then((response) => {
+		expect(response.body.msg).toBe("not found");
+		});
+	});
+	test("STATUS 400: should return 400 status code when there is an incomplete body. ", () => {
+		return request(app)
+		.patch("/api/articles/incomplete")
+		.expect(400)
+		.then((response) => {
+		expect(response.body.msg).toBe("invalid id");
+		})
+	});
+	test("STATUS 400: bad request when passed an invalid article id", () => {
+		return request(app)
+		.patch("/api/articles/randomid")
+		.send({inc_votes: 1})
+		.expect(400)
+		.then((response) => {
+			expect(response.body.msg).toBe("invalid id");
+		})
+	});
+});
