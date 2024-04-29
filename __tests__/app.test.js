@@ -471,7 +471,4 @@ describe.only("GET /api/articles/:article_id (comment_count)", () => {
 });
 });
 
-//status 200
-//400 error
-//404 error
 
