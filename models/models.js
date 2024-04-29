@@ -13,30 +13,74 @@ const endpointsString = await fs.readFile(endpoints, "utf-8");
 return JSON.parse(endpointsString)
     };
 
+//update this query
     const selectArticlesId = (article_id) => {
-        return db.query(`SELECT * FROM articles
-        WHERE article_id=$1`, [article_id])
+        return db.query(`SELECT articles.*,
+        COUNT(comments.article_id)
+        AS comment_count
+        FROM articles
+        LEFT JOIN comments
+        ON comments.article_id = articles.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id`, [article_id])
         .then((response) => {
-            if (response.rows.length === 0) {
-                return Promise.reject({ status: 404, msg: "not found"});
-            }
-            return response.rows[0];
+           // console.log(response)
+        if (response.rows.length === 0) {
+            return Promise.reject({ status: 404, msg: "not found"});
+        }
+        return response.rows[0];
         });
     };
 
-    const selectAllArticles = () => {
-        return db.query 
-        (`SELECT articles.*,
+
+
+    // const selectArticlesId = (article_id) => {
+    //     return db.query(`SELECT * FROM articles
+    //     WHERE article_id=$1`, [article_id])
+    //     .then((response) => {
+    //         if (response.rows.length === 0) {
+    //             return Promise.reject({ status: 404, msg: "not found"});
+    //         }
+    //         return response.rows[0];
+    //     });
+    // };
+
+    const selectAllArticles = (topic) => {
+        let query = 
+             `SELECT articles.*,
         COUNT(comments.comment_id) AS comment_count
         FROM articles
         LEFT JOIN comments
         ON articles.article_id = comments.article_id
+        `;
+
+    const topicQuery = ['mitch', 'paper', 'cats']
+
+    if (topic && topicQuery.includes(topic)) {
+        query += ` WHERE topic = '${topic}'`;
+    } else if (topic && !topicQuery.includes(topic)) {
+        return Promise.reject({ status: 400, msg: "not found" });
+    }
+
+    query += `
         GROUP BY articles.article_id
-        ORDER BY articles.created_at DESC;`)
+        ORDER BY articles.created_at DESC;
+    `;
+    
+    return db.query(query)
         .then((result) => {
-          return result
-        })
-    };
+            return result.rows;
+        });
+};
+
+  //query task 
+
+// FEATURE REQUEST An article response object
+// should also now include:
+// comment_count, which is the total count of all
+// the comments with this article_id.
+//  You should make use of queries to the database in 
+//  order to achieve this.
 
     const selectAllComments = (article_id) => {
         return db.query 
@@ -48,6 +92,7 @@ return JSON.parse(endpointsString)
         return rows
     });
     };
+
 
     const addComment = (article_id, newUsername, commentBody) => {
     if (!article_id || !commentBody) {
@@ -65,7 +110,6 @@ return JSON.parse(endpointsString)
 
     const updateVotes = async (article_id, inc_votes) => {
   return await db.query(
-            //update 
         `UPDATE articles
         SET votes = votes + $1
         WHERE article_id = $2
@@ -76,7 +120,27 @@ return JSON.parse(endpointsString)
         });
     };
 
+    const removeComment = (comment_id) => {
+            return db.query(
+                `DELETE FROM comments
+                WHERE comment_id = $1
+                RETURNING *;`, 
+                [comment_id], console.log(comment_id))
+        .then(({rows}) => {
+            if (rows.length === 0)
+            return Promise.reject({
+                status: 404,
+                msg: "invalid id",
+              });
+        });
+    };
+
+    const selectUsers = () => {
+        return db.query (`SELECT * FROM USERS;`)
+        .then(({ rows }) => {
+            return rows
+        });
+    };
 
 
-
-module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment, updateVotes }
+module.exports = { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment, updateVotes, removeComment, selectUsers }

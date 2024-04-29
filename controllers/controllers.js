@@ -1,5 +1,5 @@
 
-const { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment, updateVotes } = require("../models/models")
+const { selectTopics, selectEndpoints, selectArticlesId, selectAllArticles, selectAllComments, addComment, updateVotes, removeComment, selectUsers } = require("../models/models")
 
 exports.getTopics = (req, res, next) => {
 		selectTopics().then((topics) => {
@@ -30,7 +30,8 @@ exports.getArticlesId = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-	selectAllArticles()
+	const { topic } = req.query;
+	selectAllArticles(topic)
 	.then((articles) => {
 		res.status(200).send({ articles });
 	})
@@ -38,6 +39,7 @@ exports.getAllArticles = (req, res, next) => {
 		next(err);
 	});		
 };
+
 
 
 exports.getComments = (req, res, next) => {
@@ -79,3 +81,63 @@ exports.patchVotes = (req, res, next) => {
 		next(err);
 	})
 }
+
+exports.deleteComment = (req, res, next) => {
+	const { comment_id } = req.params;
+	removeComment(comment_id)
+	.then(() => {
+		res.status(204).send();
+	  })
+	  .catch((err) => {
+		next(err);
+	  });
+};
+  
+exports.getUsers = (req, res, next) => {
+	selectUsers()
+	.then((users) => {
+		res.status(200).send({users})
+	})
+	.catch((err) => {
+		next(err);
+	  });
+	}
+// exports.getUserById(req, res, next) {
+// 	fetchUserById(req, res, next) 
+// 		.then((user) => {
+// 			res.status(200).send({ user: user });
+// 		})
+// 		.catch((err) => {
+// 			next(err);
+// 		})
+// 	}
+
+
+
+
+// 	console.log(comment_id)
+// 	removeComment(comment_id)
+// 	.then((exists) => {
+// 		if (!exists) {
+// 		  return Promise.reject({ status: 400, msg: "invalid id" });
+// 		}
+// 		return deleteComment(comment_id);
+// 	  })
+// 	  .then((result) => {
+// 		res.status(204).send(result);
+// 	  })
+// 	  .catch((error) => {
+// 		next(error);
+// 	  });
+//   };
+
+
+
+
+// 	.then((deleteComments) => {
+// 		res.status(204).send({ deleteComments });
+// 	})
+// 	.catch((err) => {
+// 		next(err);
+// 	});
+// }

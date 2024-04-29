@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getEndpoints, getArticlesId, getAllArticles, getComments, postComment, patchVotes } = require("./controllers/controllers");
+const { getTopics, getEndpoints, getArticlesId, getAllArticles, getComments, postComment, patchVotes, deleteComment, getUsers, getUserById } = require("./controllers/controllers");
 const app = express();
 
 app.use(express.json());
@@ -18,15 +18,11 @@ app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchVotes)
 
+app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api/users", getUsers);
 
 //psql error handlers
-
-// app.use((err, req, res, next) => {
-//   if (err.code === '22P02') {
-//     res.status(400).send({ msg: "invalid id" });
-//   }
-//   next(err);
-// });
 
 app.use((err, req, res, next) => {
   if (err.code === '22P02') {

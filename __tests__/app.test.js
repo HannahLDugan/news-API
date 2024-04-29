@@ -265,7 +265,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 
 //task 8 TDD
 
-describe.only("PATCH: ", () => {
+describe("PATCH: ", () => {
 	test("STATUS 200: should return a 200 status code", () => {
 		// jest.setTimeout(10000)
 		return request(app)
@@ -310,3 +310,168 @@ describe.only("PATCH: ", () => {
 		})
 	});
 });
+
+// task 9 - DELETE /api/comments/:comment_id
+
+describe("DELETE api/comments/:comment_id", () => {
+	test("status 204: No content, delete comment.", () => {
+		return request(app)
+			.delete("/api/comments/1")
+			.expect(204)
+	});
+	test("STATUS 404: should return 404 status code when there is no comment. ", () => {
+		return request(app)
+		.delete("/api/comments/10000")
+		.expect(404)
+		.then((response) => {
+			expect(response.body.msg).toBe("invalid id");
+		});
+		})
+	test("STATUS 400: should return status 400 when there is an invalid id", () =>{
+		return request(app)
+		.delete("/api/comments/abcdefg")
+		.expect(400)
+		.then((response) => {
+			expect(response.body.msg).toBe("invalid id");
+		});
+	});
+});
+
+
+describe("GET /api/users", () => {
+	test("Should return 200 status code", () => {
+		return request(app)
+		.get("/api/users")
+		.expect(200)
+	});
+	test("should return an array of all of the user objects with the correct properties", () => {
+	return request(app)
+	.get("/api/users")
+	.expect(200)
+	.then((response) => {
+		expect(response.body.users.length).toBe(4)
+		expect(Array.isArray(response.body.users)).toBe(true)
+		response.body.users.forEach((user) => {
+			expect(typeof user.username).toBe("string");
+			expect(typeof user.name).toBe("string");
+			expect(typeof user.avatar_url).toBe("string");
+		});
+	});
+	});
+	test("STATUS 404: should return 404 status code when there is no comment. ", () => {
+		return request(app)
+		.delete("/api/users/10000")
+		.expect(404)
+		.then((response) => {
+			expect(response.body.msg).toBe("not found");
+		});
+		})
+	// test("STATUS 400: should return status 400 when there is an invalid id", () =>{
+	// 	return request(app)
+	// 	.delete("/api/users/abcdfeg")
+	// 	.expect(400)
+	// 	.then((response) => {
+	// 		expect(response.body.msg).toBe("invalid id");
+	// 	});
+	// });
+});
+
+// task 11 - GET /api/articles (topic query)
+
+describe("GET /api/articles (topic query)", () => {
+	test("returns status code 200 and an array of articles filtered by topic.", () => {
+		return request(app)
+			.get("/api/articles?topic=cats")
+			.expect(200)
+			.then((response) => {
+				const { body } = response;
+				expect(Array.isArray(body.articles)).toBe(true);
+				expect(body.articles).toHaveLength(1)
+				body.articles.forEach((article) => {
+					expect(article.topic).toEqual("cats")
+				});
+			});
+		});
+	test("STATUS 200: return an empty array when requested a valid topic with no existing articles.", () =>{
+			return request(app)
+			.get("/api/articles?topic=paper")
+			.expect(200)
+			.then((response) => {
+				const { body } = response;
+				expect(Array.isArray(body.articles)).toBe(true);
+				console.log(body.articles)
+				expect(body.articles).toStrictEqual([])
+			})
+			});
+	test("STATUS 400: should return status 400 when there is an invalid topic", () =>{
+			return request(app)
+			.get("/api/articles?topic=invalidtopics")
+			.expect(400)
+			.then((response) => {
+				const { body } = response;
+				expect(body.msg).toBe("not found");
+			})
+		});
+	});
+
+// task 12 - GET /api/articles/:article_id (comment_count)
+
+describe.only("GET /api/articles/:article_id (comment_count)", () => {
+	test("Status 200: Returns status code 200 and includes comment count in the response", () => {
+		return request(app)
+		.get("/api/articles/1?comment_count")
+		.expect(200)
+		.then((response) => {
+			const articles = response.body;
+			console.log(response.body)
+			expect(articles).toMatchObject({
+				// article: {
+				// article: expect.any(Object),
+				// article_id: expect.any(Number),
+				// title: expect.any(String),
+				// topic: expect.any(String),
+				// author: expect.any(String),
+				// body: expect.any(String),
+				// created_at: expect.any(String),
+				// votes: expect.any(Number),
+				// article_img_url: expect.any(String),
+				// comment_count: expect.any(String),
+				// },
+				article: {
+				article_id: 1,
+				article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+				author: "butter_bridge",
+				body: "I find this existence challenging",
+				comment_count: "11",
+				created_at: "2020-07-09T20:11:00.000Z",
+				title: "Living in the shadow of a great man",
+				topic: "mitch",
+				votes: 100,
+				},
+			});
+		});
+	});
+	test("STATUS 400: should return status 400 when there is an invalid comment", () =>{
+		return request(app)
+		.get("/api/articles/idonotexist/comments")
+		.expect(400)
+		.then((response) => {
+			const { body } = response;
+			expect(body.msg).toBe("invalid id");
+		})
+	});
+	test("STATUS 404: should return status 404 when there is an invalid comment", () =>{
+		return request(app)
+		.get("/api/articles/1000/comments")
+		.expect(404)
+		.then((response) => {
+			const { body } = response;
+			expect(body.msg).toBe("not found");
+		})
+});
+});
+
+//status 200
+//400 error
+//404 error
+
