@@ -17,8 +17,8 @@ Install Dependencies below:
 Copy code
 cd nc-news
 npm install
+
 Seed Local Database:
-arduino
 Copy code
 npm run seed
 
@@ -26,10 +26,6 @@ Create .env Files:
 You need to create two .env files in the root directory of the project:
 .env.development for development environment variables.
 .env.test for test environment variables.
-
-Run Tests:
-Copy code
-npm test
 
 Start the Server:
 sql
