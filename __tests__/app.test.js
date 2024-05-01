@@ -14,7 +14,7 @@ afterAll(() => db.end());
 describe("GET /api/topics", () => {
 	test("respond with STATUS 200.", () => {
 		return request(app)
-			.get("/api/topics")
+			.get("/api/topic")
 			.expect(200)
 		});
 	test("status 200: request should respond with an array of topic objects", () => {
