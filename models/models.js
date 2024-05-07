@@ -13,7 +13,6 @@ const endpointsString = await fs.readFile(endpoints, "utf-8");
 return JSON.parse(endpointsString)
     };
 
-//update this query
     const selectArticlesId = (article_id) => {
         return db.query(`SELECT articles.*,
         COUNT(comments.article_id)
@@ -24,26 +23,12 @@ return JSON.parse(endpointsString)
         WHERE articles.article_id = $1
         GROUP BY articles.article_id`, [article_id])
         .then((response) => {
-           // console.log(response)
         if (response.rows.length === 0) {
             return Promise.reject({ status: 404, msg: "not found"});
         }
         return response.rows[0];
         });
     };
-
-
-
-    // const selectArticlesId = (article_id) => {
-    //     return db.query(`SELECT * FROM articles
-    //     WHERE article_id=$1`, [article_id])
-    //     .then((response) => {
-    //         if (response.rows.length === 0) {
-    //             return Promise.reject({ status: 404, msg: "not found"});
-    //         }
-    //         return response.rows[0];
-    //     });
-    // };
 
     const selectAllArticles = (topic) => {
         let query = 
@@ -72,15 +57,6 @@ return JSON.parse(endpointsString)
             return result.rows;
         });
 };
-
-  //query task 
-
-// FEATURE REQUEST An article response object
-// should also now include:
-// comment_count, which is the total count of all
-// the comments with this article_id.
-//  You should make use of queries to the database in 
-//  order to achieve this.
 
     const selectAllComments = (article_id) => {
         return db.query 
@@ -125,7 +101,7 @@ return JSON.parse(endpointsString)
                 `DELETE FROM comments
                 WHERE comment_id = $1
                 RETURNING *;`, 
-                [comment_id], console.log(comment_id))
+                [comment_id])
         .then(({rows}) => {
             if (rows.length === 0)
             return Promise.reject({

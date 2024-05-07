@@ -74,7 +74,7 @@ exports.patchVotes = (req, res, next) => {
 	return updateVotes(article_id, inc_votes) 
   })
 	.then((article) => {
-		console.log(article)
+		//console.log(article)
 	res.status(200).send({article});
 	})
 	.catch((err) => {
@@ -102,42 +102,4 @@ exports.getUsers = (req, res, next) => {
 		next(err);
 	  });
 	}
-// exports.getUserById(req, res, next) {
-// 	fetchUserById(req, res, next) 
-// 		.then((user) => {
-// 			res.status(200).send({ user: user });
-// 		})
-// 		.catch((err) => {
-// 			next(err);
-// 		})
-// 	}
 
-
-
-
-// 	console.log(comment_id)
-// 	removeComment(comment_id)
-// 	.then((exists) => {
-// 		if (!exists) {
-// 		  return Promise.reject({ status: 400, msg: "invalid id" });
-// 		}
-// 		return deleteComment(comment_id);
-// 	  })
-// 	  .then((result) => {
-// 		res.status(204).send(result);
-// 	  })
-// 	  .catch((error) => {
-// 		next(error);
-// 	  });
-//   };
-
-
-
-
-// 	.then((deleteComments) => {
-// 		res.status(204).send({ deleteComments });
-// 	})
-// 	.catch((err) => {
-// 		next(err);
-// 	});
-// }

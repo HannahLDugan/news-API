@@ -115,6 +115,7 @@ describe("GET /api/articles/:article_id", () => {
 		.get("/api/articles")
 		.expect(200)
 		.then((response) => {
+		//	console.log(response)
 		expect(response.body.articles.rows).toBeSortedBy('created_at', {descending : true})
 		});
 		});
@@ -399,7 +400,7 @@ describe("GET /api/articles (topic query)", () => {
 			.then((response) => {
 				const { body } = response;
 				expect(Array.isArray(body.articles)).toBe(true);
-				console.log(body.articles)
+				//console.log(body.articles)
 				expect(body.articles).toStrictEqual([])
 			})
 			});
@@ -416,14 +417,14 @@ describe("GET /api/articles (topic query)", () => {
 
 // task 12 - GET /api/articles/:article_id (comment_count)
 
-describe.only("GET /api/articles/:article_id (comment_count)", () => {
+describe("GET /api/articles/:article_id (comment_count)", () => {
 	test("Status 200: Returns status code 200 and includes comment count in the response", () => {
 		return request(app)
 		.get("/api/articles/1?comment_count")
 		.expect(200)
 		.then((response) => {
 			const articles = response.body;
-			console.log(response.body)
+			//console.log(response.body)
 			expect(articles).toMatchObject({
 				// article: {
 				// article: expect.any(Object),
